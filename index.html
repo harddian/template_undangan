@@ -57,12 +57,16 @@
         .animate-pulse-slow {
             animation: pulse-slow 3s infinite ease-in-out;
         }
+        /* Carousel horizontal track styling */
+        #carousel-track {
+            display: flex;
+            will-change: transform;
+        }
     </style>
 </head>
 <body class="bg-brand-50 text-stone-800 font-sans no-scroll">
 
     <!-- AUDIO PLAYER (HIDDEN) -->
-    <!-- Ganti URL di src dengan link mp3 musik romantis pilihan Anda -->
     <audio id="bg-music" loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
@@ -124,7 +128,7 @@
         <section class="py-20 px-6 text-center space-y-12">
             <div>
                 <span class="text-xs uppercase tracking-[0.2em] text-brand-500 font-semibold">Memperkenalkan</span>
-                <h2 class="font-serif text-4xl text-brand-800 mt-1">Kedua MempelaI</h2>
+                <h2 class="font-serif text-4xl text-brand-800 mt-1">Kedua Mempelai</h2>
             </div>
 
             <!-- Mempelai Pria -->
@@ -226,7 +230,7 @@
             </div>
         </section>
 
-        <!-- RSVP FORM -->
+        <!-- RSVP FORM & REALTIME COUNTER -->
         <section class="py-16 px-6 bg-stone-900 text-white text-center space-y-8 rounded-t-[2.5rem] relative overflow-hidden">
             <div class="space-y-2">
                 <span class="text-xs uppercase tracking-[0.2em] text-brand-300 font-semibold">Konfirmasi Kehadiran</span>
@@ -234,24 +238,35 @@
                 <p class="text-xs text-stone-300 max-w-xs mx-auto leading-relaxed">Merupakan kehormatan besar bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir di hari bahagia kami.</p>
             </div>
 
-            <form id="rsvp-form" onsubmit="handleRSVP(event)" class="text-left space-y-4 max-w-xs mx-auto">
-                <div>
-                    <label class="block text-xs font-semibold tracking-wider uppercase text-brand-200 mb-1" for="rsvp-name">Nama Anda</label>
-                    <input type="text" id="rsvp-name" required class="w-full bg-stone-800 border border-stone-700 rounded-lg py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand-400">
+            <!-- RSVP LIVE STATS COUNTER -->
+            <div class="grid grid-cols-2 gap-4 max-w-xs mx-auto bg-stone-800/60 p-4 rounded-xl border border-stone-700/50">
+                <div class="text-center">
+                    <span class="block text-xs uppercase tracking-wider text-brand-300">Total Hadir</span>
+                    <span id="stats-hadir" class="text-2xl font-bold font-serif text-emerald-400">0</span>
+                    <span class="block text-[10px] text-stone-400">Orang</span>
                 </div>
+                <div class="text-center border-l border-stone-700">
+                    <span class="block text-xs uppercase tracking-wider text-brand-300">Tidak Hadir</span>
+                    <span id="stats-tidak-hadir" class="text-2xl font-bold font-serif text-rose-400">0</span>
+                    <span class="block text-[10px] text-stone-400">Undangan</span>
+                </div>
+            </div>
+
+            <!-- RSVP Form -->
+            <form id="rsvp-form" onsubmit="handleRSVP(event)" class="text-left space-y-4 max-w-xs mx-auto">
                 <div>
                     <label class="block text-xs font-semibold tracking-wider uppercase text-brand-200 mb-1" for="rsvp-attendance">Konfirmasi Kehadiran</label>
                     <select id="rsvp-attendance" required class="w-full bg-stone-800 border border-stone-700 rounded-lg py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand-400">
                         <option value="Hadir">Ya, Saya Akan Hadir</option>
                         <option value="Tidak Hadir">Maaf, Saya Tidak Bisa Hadir</option>
-                        <option value="Ragu-ragu">Masih Ragu-ragu</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold tracking-wider uppercase text-brand-200 mb-1" for="rsvp-guests">Jumlah Tamu</label>
+                <div id="rsvp-guests-container">
+                    <label class="block text-xs font-semibold tracking-wider uppercase text-brand-200 mb-1" for="rsvp-guests">Jumlah Tamu yang Hadir</label>
                     <select id="rsvp-guests" class="w-full bg-stone-800 border border-stone-700 rounded-lg py-2.5 px-4 text-sm text-white focus:outline-none focus:border-brand-400">
                         <option value="1">1 Orang</option>
                         <option value="2">2 Orang</option>
+                        <option value="3">3 Orang</option>
                     </select>
                 </div>
                 <button type="submit" class="w-full py-3 bg-brand-600 text-white rounded-lg text-xs font-semibold tracking-wider uppercase hover:bg-brand-500 transition-all shadow-md active:scale-95 mt-2">
@@ -327,8 +342,8 @@
             </button>
         </section>
 
-        <!-- WISHES & GUESTBOOK -->
-        <section class="py-16 px-6 text-center space-y-8">
+        <!-- WISHES & GUESTBOOK (CAROUSEL DESIGN) -->
+        <section class="py-16 px-6 text-center space-y-8 overflow-hidden">
             <div class="space-y-2">
                 <span class="text-xs uppercase tracking-[0.2em] text-brand-500 font-semibold">Doa Restu</span>
                 <h2 class="font-serif text-4xl text-brand-800">Ucapan & Harapan</h2>
@@ -338,34 +353,39 @@
             <!-- Form Ucapan -->
             <form id="wish-form" onsubmit="handleWishSubmit(event)" class="text-left space-y-4 max-w-xs mx-auto">
                 <div>
-                    <input type="text" id="wish-name" placeholder="Nama Anda" required class="w-full bg-brand-50 border border-brand-200 rounded-lg py-2.5 px-4 text-sm text-stone-800 focus:outline-none focus:border-brand-500">
+                    <input type="text" id="wish-name" placeholder="Nama Anda" required maxlength="50" class="w-full bg-brand-50 border border-brand-200 rounded-lg py-2.5 px-4 text-sm text-stone-800 focus:outline-none focus:border-brand-500">
                 </div>
                 <div>
-                    <textarea id="wish-text" rows="3" placeholder="Tulis ucapan & doa restu Anda..." required class="w-full bg-brand-50 border border-brand-200 rounded-lg py-2.5 px-4 text-sm text-stone-800 focus:outline-none focus:border-brand-500"></textarea>
+                    <textarea id="wish-text" rows="3" placeholder="Tulis ucapan & doa restu Anda..." required maxlength="300" class="w-full bg-brand-50 border border-brand-200 rounded-lg py-2.5 px-4 text-sm text-stone-800 focus:outline-none focus:border-brand-500"></textarea>
+                    <div class="flex justify-between items-center px-1 mt-1">
+                        <p class="text-[10px] text-stone-400">*Maksimal 300 karakter</p>
+                        <p id="char-counter" class="text-[10px] text-stone-400">0/300</p>
+                    </div>
                 </div>
                 <button type="submit" class="w-full py-3 bg-brand-800 text-white rounded-lg text-xs font-semibold tracking-wider uppercase hover:bg-brand-700 transition-all shadow-md active:scale-95">
                     Kirim Ucapan
                 </button>
             </form>
 
-            <!-- Box Daftar Ucapan -->
-            <div class="max-w-xs mx-auto bg-brand-50/50 rounded-2xl p-4 text-left space-y-4 max-h-[400px] overflow-y-auto border border-brand-100" id="wishes-container">
-                <!-- Ucapan default/simulasi -->
-                <div class="bg-white p-4 rounded-xl shadow-sm space-y-1">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-xs text-stone-800">Andi Prasetyo</span>
-                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full"><i class="fa-solid fa-circle-check"></i> Hadir</span>
-                    </div>
-                    <p class="text-xs text-stone-600">Selamat ya Romeo dan Juliet! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. Maaf belum bisa hadir langsung, tapi doa terbaik dari kami selalu menyertai kalian.</p>
+            <!-- Box Daftar Ucapan (CAROUSEL WRAPPER) -->
+            <div id="carousel-container" class="relative max-w-xs mx-auto overflow-hidden rounded-2xl group py-4">
+                <!-- Carousel Track -->
+                <div id="carousel-track" class="transition-transform duration-500 ease-in-out">
+                    <!-- Dinamis diisi dari Javascript -->
                 </div>
                 
-                <div class="bg-white p-4 rounded-xl shadow-sm space-y-1">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-xs text-stone-800">Siti Rahma</span>
-                        <span class="text-[10px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full">Tidak Hadir</span>
-                    </div>
-                    <p class="text-xs text-stone-600">Happy Wedding! Semoga cinta kalian berdua terus abadi selamanya. Lancar-lancar acaranya ya!</p>
-                </div>
+                <!-- Navigation Buttons -->
+                <button onclick="prevSlide()" id="prev-slide-btn" class="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center text-stone-600 hover:bg-white active:scale-90 transition-all z-10">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <button onclick="nextSlide()" id="next-slide-btn" class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow-md flex items-center justify-center text-stone-600 hover:bg-white active:scale-90 transition-all z-10">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Dots Indicators -->
+            <div id="carousel-indicators" class="flex justify-center gap-1.5 mt-2">
+                <!-- Dinamis diisi dari Javascript -->
             </div>
         </section>
 
@@ -374,17 +394,16 @@
             <h3 class="font-serif text-3xl font-light italic text-brand-800">Romeo & Juliet</h3>
             <p class="text-xs text-stone-500 leading-relaxed max-w-xs mx-auto">Merupakan kehormatan serta kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kami.</p>
             <p class="text-xs text-stone-400">Atas kehadiran dan doa restunya, kami ucapkan terima kasih.</p>
-            <!-- Mengaktifkan fitur ketuk tersembunyi pada footer -->
             <p onclick="handleFooterClick()" class="text-[10px] uppercase tracking-widest text-stone-400 pt-8 cursor-pointer select-none active:scale-95 transition-transform">Made with <i class="fa-solid fa-heart text-red-500"></i> by WeddingDigital</p>
         </footer>
 
     </div>
 
-    <!-- CUSTOM NOTIFICATION MODAL (PENGGANTI ALERT NATIVE BROWSER) -->
+    <!-- CUSTOM NOTIFICATION MODAL -->
     <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl transform scale-95 transition-transform duration-300" id="alert-box">
             <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center mx-auto text-3xl shadow-sm border border-brand-100">
-                <i class="fa-solid fa-circle-check animate-bounce" id="alert-icon"></i>
+                <i class="fa-solid fa-circle-check" id="alert-icon"></i>
             </div>
             <h4 class="font-serif text-2xl font-bold text-brand-800" id="alert-title">Berhasil!</h4>
             <p class="text-xs text-stone-600 leading-relaxed" id="alert-message">Pesan Anda berhasil dikirim.</p>
@@ -420,15 +439,33 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // MEMBACA NAMA GUEST DARI URL QUERY (?to=Nama+Tamu) & MENGECEK STATUS AKSES ADMIN
+        // Simulasi data bawaan agar halaman terlihat berisi saat pertama kali dicoba
+        const defaultRSVPs = [
+            { name: "Andi Prasetyo", attendance: "Hadir", guests: 2 },
+            { name: "Siti Rahma", attendance: "Tidak Hadir", guests: 0 },
+            { name: "Rizky Fauzi", attendance: "Hadir", guests: 1 }
+        ];
+
+        const defaultWishes = [
+            { name: "Andi Prasetyo", text: "Selamat ya Romeo dan Juliet! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. Doa terbaik dari kami selalu menyertai kalian." },
+            { name: "Siti Rahma", text: "Happy Wedding! Semoga cinta kalian berdua terus abadi selamanya. Lancar-lancar seluruh acaranya ya!" },
+            { name: "Rizky Fauzi", text: "Selamat menempuh hidup baru sahabat terbaikku. Semoga terus bersama hingga maut memisahkan." }
+        ];
+
+        let currentGuestName = "Tamu Undangan";
+        let currentSlide = 0;
+        let carouselInterval = null;
+        let startX = 0;
+        let endX = 0;
+
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const guestName = urlParams.get('to');
             if (guestName) {
-                document.getElementById('guest-name').innerText = decodeURIComponent(guestName);
+                currentGuestName = decodeURIComponent(guestName);
+                document.getElementById('guest-name').innerText = currentGuestName;
             }
             
-            // Cek parameter URL (?admin=true) ATAU pengecekan status login di localStorage
             const isAdminParam = urlParams.get('admin') === 'true';
             const isLocalAdmin = localStorage.getItem('is_wedding_admin') === 'true';
             
@@ -436,53 +473,91 @@
                 document.getElementById('admin-section').classList.remove('hidden');
             }
             
-            // Inisialisasi daftar ucapan dari localStorage jika ada
+            // Inisialisasi basis data lokal jika masih kosong
+            if (!localStorage.getItem('wedding_rsvps')) {
+                localStorage.setItem('wedding_rsvps', JSON.stringify(defaultRSVPs));
+            }
+            if (!localStorage.getItem('wedding_wishes')) {
+                localStorage.setItem('wedding_wishes', JSON.stringify(defaultWishes));
+            }
+
+            // Memuat data dari local storage ke dashboard dan list ucapan
             loadWishes();
+            updateRSVPStats();
+
+            // Interaksi Form: Sembunyikan 'Jumlah Tamu' jika RSVP "Tidak Hadir"
+            document.getElementById('rsvp-attendance').addEventListener('change', (e) => {
+                const guestContainer = document.getElementById('rsvp-guests-container');
+                if (e.target.value === 'Tidak Hadir') {
+                    guestContainer.classList.add('hidden');
+                } else {
+                    guestContainer.classList.remove('hidden');
+                }
+            });
+
+            // Event listener untuk penghitung karakter secara real-time
+            const wishTextarea = document.getElementById('wish-text');
+            const charCounter = document.getElementById('char-counter');
+            if (wishTextarea && charCounter) {
+                wishTextarea.addEventListener('input', () => {
+                    const length = wishTextarea.value.length;
+                    charCounter.innerText = `${length}/300`;
+                    if (length >= 280) {
+                        charCounter.className = "text-[10px] text-red-500 font-semibold";
+                    } else {
+                        charCounter.className = "text-[10px] text-stone-400";
+                    }
+                });
+            }
+
+            // Setup Touch Swiping untuk Carousel
+            const carouselContainer = document.getElementById('carousel-container');
+            if (carouselContainer) {
+                carouselContainer.addEventListener('touchstart', e => {
+                    startX = e.touches[0].clientX;
+                }, { passive: true });
+
+                carouselContainer.addEventListener('touchend', e => {
+                    endX = e.changedTouches[0].clientX;
+                    handleSwipeGesture();
+                }, { passive: true });
+            }
         });
 
-        // BUKA UNDANGAN, PLAY MUSIC & START COUNTDOWN
         let isMusicPlaying = false;
         const bgMusic = document.getElementById('bg-music');
         const musicIcon = document.getElementById('music-icon');
 
         function openInvitation() {
-            // Hilangkan class pengunci scroll pada body
             document.body.classList.remove('no-scroll');
             
-            // Transisi slide out untuk cover overlay
             const cover = document.getElementById('cover-overlay');
             cover.classList.add('opacity-0', 'pointer-events-none');
             setTimeout(() => {
                 cover.classList.add('hidden');
             }, 1000);
             
-            // Tampilkan konten utama dengan animasi halus
             const mainContent = document.getElementById('main-content');
             mainContent.classList.remove('opacity-0');
             mainContent.classList.add('opacity-100');
             
-            // Munculkan tombol musik mengambang
             const musicBtn = document.getElementById('music-toggle');
             musicBtn.classList.remove('hidden');
 
-            // Mulai putar musik
             playMusic();
-
-            // Mulai hitung mundur tanggal pernikahan secara real-time
             startCountdown();
+            startAutoPlay();
         }
 
-        // KONTROL MUSIK LATAR BELAKANG
         function playMusic() {
             bgMusic.play().then(() => {
                 isMusicPlaying = true;
                 musicIcon.className = "fa-solid fa-compact-disc fa-spin";
             }).catch(err => {
-                console.log("Autoplay tertahan oleh browser. Membutuhkan interaksi pengguna.", err);
+                console.log("Autoplay tertahan browser.", err);
             });
         }
 
-        // Event listener untuk tombol musik
         document.getElementById('music-toggle').addEventListener('click', () => {
             if (isMusicPlaying) {
                 bgMusic.pause();
@@ -495,9 +570,7 @@
             }
         });
 
-        // HITUNG MUNDUR (COUNTDOWN TIMER)
         function startCountdown() {
-            // Target Tanggal Pernikahan (12 September 2026 pukul 08:00 WIB)
             const targetDate = new Date("Sep 12, 2026 08:00:00").getTime();
 
             const countdownInterval = setInterval(() => {
@@ -513,13 +586,11 @@
                     return;
                 }
 
-                // Kalkulasi sisa waktu
                 const days = Math.floor(difference / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-                // Update teks visual dengan format dua digit angka
                 document.getElementById('days').innerText = String(days).padStart(2, '0');
                 document.getElementById('hours').innerText = String(hours).padStart(2, '0');
                 document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
@@ -527,15 +598,288 @@
             }, 1000);
         }
 
-        // SYSTEM KEAMANAN: RAHASIA AKSES ADMIN PENGANTIN
+        // REALTIME STATS CALCULATION
+        function updateRSVPStats() {
+            const rsvps = JSON.parse(localStorage.getItem('wedding_rsvps')) || [];
+            
+            let totalHadir = 0;
+            let totalTidakHadir = 0;
+
+            rsvps.forEach(rsvp => {
+                if (rsvp.attendance === 'Hadir') {
+                    totalHadir += parseInt(rsvp.guests || 1);
+                } else if (rsvp.attendance === 'Tidak Hadir') {
+                    totalTidakHadir += 1;
+                }
+            });
+
+            // Update stats di section RSVP
+            document.getElementById('stats-hadir').innerText = totalHadir;
+            document.getElementById('stats-tidak-hadir').innerText = totalTidakHadir;
+        }
+
+        // PROSES FORM RSVP & UPDATE COUNTER FRONTEND (TANPA WHATSAPP)
+        function handleRSVP(event) {
+            event.preventDefault();
+            const name = currentGuestName;
+            const attendance = document.getElementById('rsvp-attendance').value;
+            const guests = attendance === 'Hadir' ? parseInt(document.getElementById('rsvp-guests').value) : 0;
+
+            // Simpan data RSVP ke Database Lokal (Frontend)
+            let rsvps = JSON.parse(localStorage.getItem('wedding_rsvps')) || [];
+            // Hindari nama ganda, hapus entri lama jika ada
+            rsvps = rsvps.filter(r => r.name.toLowerCase() !== name.toLowerCase());
+            rsvps.unshift({ name, attendance, guests });
+            localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
+
+            // Perbarui live counter di frontend secara instan
+            updateRSVPStats();
+
+            // Tampilkan pop-up konfirmasi sukses kustom yang elegan tanpa redirect ke WhatsApp
+            showAlert(
+                "Konfirmasi Berhasil!",
+                `Terima kasih <strong>${escapeHtml(name)}</strong>. Konfirmasi kehadiran Anda telah berhasil kami catat di sistem.`,
+                "fa-solid fa-circle-check text-emerald-500 text-4xl"
+            );
+            
+            document.getElementById('rsvp-form').reset();
+            document.getElementById('rsvp-guests-container').classList.remove('hidden'); // reset view form
+        }
+
+        // Daftar Kata Kasar / Tidak Pantas (Sensor Otomatis)
+        const BLACKLISTED_WORDS = [
+            'anjing', 'babi', 'bangsat', 'kontol', 'memek', 'jembut', 'peler', 'goblok', 'tolol', 'bego', 'idiot', 'bajingan', 'brengsek',
+            'asu', 'fuck', 'shit', 'bitch', 'asshole', 'dick', 'pussy', 'ngentot', 'entot', 'pantek', 'pecun', 'perek', 'pelacur', 'gila',
+            'sinting', 'bejat', 'keparat', 'jablay', 'lonte'
+        ];
+
+        // Mendeteksi Tautan, URL, Script, atau Simbol Eksploitasi
+        function checkInappropriateContent(text) {
+            // Regex mendeteksi tautan web (http, https, www, domain extensions)
+            const linkPattern = /(https?:\/\/[^\s]+|www\.[^\s]+|\.com|\.net|\.org|\.id|\.xyz|\.co|\.info|\.me|\.live)/i;
+            
+            // Regex mendeteksi tag HTML atau elemen script
+            const htmlPattern = /<[^>]*>|javascript:/i;
+            
+            if (linkPattern.test(text)) {
+                return { invalid: true, reason: "Tautan/URL promosi dilarang di buku ucapan." };
+            }
+            if (htmlPattern.test(text)) {
+                return { invalid: true, reason: "Penggunaan karakter HTML/Script dilarang demi keamanan." };
+            }
+            return { invalid: false };
+        }
+
+        // Sensor kata kotor menjadi tanda bintang (*)
+        function cleanProfanity(text) {
+            let sanitizedText = text;
+            BLACKLISTED_WORDS.forEach(word => {
+                const regex = new RegExp(`\\b${word}\\b`, 'gi');
+                if (regex.test(sanitizedText)) {
+                    sanitizedText = sanitizedText.replace(regex, '*'.repeat(word.length));
+                }
+            });
+            return sanitizedText;
+        }
+
+        // PROSES FORM UCAPAN / GUESTBOOK DENGAN COOLDOWN & FILTER KEAMANAN
+        function handleWishSubmit(event) {
+            event.preventDefault();
+            
+            let name = document.getElementById('wish-name').value.trim();
+            let text = document.getElementById('wish-text').value.trim();
+
+            // 1. Validasi Input Kosong
+            if (!name || !text) {
+                showAlert("Form Belum Lengkap", "Mohon isi Nama dan Ucapan Anda terlebih dahulu.", "fa-solid fa-circle-exclamation text-amber-500 text-4xl");
+                return;
+            }
+
+            // 2. Proteksi Spam / Rate Limiter (Cooldown 60 detik)
+            const lastWishTimestamp = localStorage.getItem('last_wish_time');
+            const now = Date.now();
+            const cooldownTime = 60000; // 60 Detik
+
+            if (lastWishTimestamp && (now - lastWishTimestamp < cooldownTime)) {
+                const secondsRemaining = Math.ceil((cooldownTime - (now - lastWishTimestamp)) / 1000);
+                showAlert(
+                    "Mohon Tunggu",
+                    `Anda baru saja mengirim ucapan. Harap tunggu <strong>${secondsRemaining} detik</strong> sebelum mengirim ucapan baru demi kenyamanan bersama.`,
+                    "fa-solid fa-clock text-amber-500 text-4xl"
+                );
+                return;
+            }
+
+            // 3. Batasan Karakter Ekstra
+            if (name.length > 50 || text.length > 300) {
+                showAlert("Teks Terlalu Panjang", "Panjang nama maksimal 50 karakter dan ucapan maksimal 300 karakter.", "fa-solid fa-triangle-exclamation text-rose-500 text-4xl");
+                return;
+            }
+
+            // 4. Deteksi Tautan / Link & Tag HTML (Security Shield)
+            const nameCheck = checkInappropriateContent(name);
+            const textCheck = checkInappropriateContent(text);
+            if (nameCheck.invalid) {
+                showAlert("Aktivitas Ditolak", nameCheck.reason, "fa-solid fa-shield-halved text-rose-600 text-4xl");
+                return;
+            }
+            if (textCheck.invalid) {
+                showAlert("Aktivitas Ditolak", textCheck.reason, "fa-solid fa-shield-halved text-rose-600 text-4xl");
+                return;
+            }
+
+            // 5. Sensor Kata Kotor / Kasar
+            name = cleanProfanity(name);
+            text = cleanProfanity(text);
+
+            const newWish = {
+                name: name,
+                text: text
+            };
+
+            // Simpan Ucapan secara Aman ke LocalStorage
+            let wishes = JSON.parse(localStorage.getItem('wedding_wishes')) || [];
+            wishes.unshift(newWish);
+            localStorage.setItem('wedding_wishes', JSON.stringify(wishes));
+
+            // Set waktu pengiriman terakhir untuk rate-limiting
+            localStorage.setItem('last_wish_time', now.toString());
+
+            // Render ulang ucapan dan paksa lompat ke slide pertama (ucapan teranyar)
+            renderWishes(wishes);
+            moveToSlide(0);
+
+            // Tampilkan notifikasi keberhasilan
+            showAlert("Ucapan Terkirim!", "Terima kasih atas doa restu indah yang Anda kirimkan untuk mempelai.", "fa-solid fa-heart text-rose-500 text-4xl");
+
+            // Reset formulir ucapan
+            document.getElementById('wish-form').reset();
+            document.getElementById('char-counter').innerText = "0/300";
+            document.getElementById('char-counter').className = "text-[10px] text-stone-400";
+        }
+
+        function loadWishes() {
+            let wishes = JSON.parse(localStorage.getItem('wedding_wishes')) || [];
+            renderWishes(wishes);
+        }
+
+        // CAROUSEL LOGIC INTEGRATION
+        function renderWishes(wishes) {
+            const track = document.getElementById('carousel-track');
+            const indicatorsContainer = document.getElementById('carousel-indicators');
+            const prevBtn = document.getElementById('prev-slide-btn');
+            const nextBtn = document.getElementById('next-slide-btn');
+
+            if (wishes.length === 0) {
+                track.innerHTML = `
+                    <div class="w-full flex-shrink-0 px-4 box-border text-center">
+                        <div class="bg-white p-6 rounded-2xl border border-stone-100 shadow-sm">
+                            <p class="text-xs text-stone-500 py-4">Belum ada ucapan. Jadilah yang pertama!</p>
+                        </div>
+                    </div>
+                `;
+                indicatorsContainer.innerHTML = '';
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+                return;
+            }
+
+            if (prevBtn) prevBtn.style.display = 'flex';
+            if (nextBtn) nextBtn.style.display = 'flex';
+
+            // Render Slides
+            track.innerHTML = wishes.map(wish => {
+                return `
+                    <div class="w-full flex-shrink-0 px-4 box-border">
+                        <div class="bg-white p-6 rounded-2xl border border-brand-100 shadow-sm min-h-[140px] flex flex-col justify-between text-center">
+                            <p class="text-xs italic text-stone-600 leading-relaxed">"${escapeHtml(wish.text)}"</p>
+                            <span class="font-semibold text-xs text-brand-700 block mt-3">— ${escapeHtml(wish.name)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Render Dot Indicators
+            indicatorsContainer.innerHTML = wishes.map((_, index) => {
+                return `
+                    <button onclick="moveToSlide(${index})" class="carousel-dot h-1.5 rounded-full transition-all duration-300 ${index === 0 ? 'bg-brand-600 w-4' : 'bg-brand-200 w-1.5'}" aria-label="Slide ${index + 1}"></button>
+                `;
+            }).join('');
+
+            currentSlide = 0;
+            updateCarouselPosition();
+        }
+
+        function updateCarouselPosition() {
+            const track = document.getElementById('carousel-track');
+            if (track) {
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+
+            // Update Dot Active State
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.className = "carousel-dot h-1.5 rounded-full transition-all duration-300 bg-brand-600 w-4";
+                } else {
+                    dot.className = "carousel-dot h-1.5 rounded-full transition-all duration-300 bg-brand-200 w-1.5";
+                }
+            });
+        }
+
+        function nextSlide() {
+            const wishes = JSON.parse(localStorage.getItem('wedding_wishes')) || [];
+            if (wishes.length <= 1) return;
+            
+            currentSlide = (currentSlide + 1) % wishes.length;
+            updateCarouselPosition();
+            resetAutoPlay();
+        }
+
+        function prevSlide() {
+            const wishes = JSON.parse(localStorage.getItem('wedding_wishes')) || [];
+            if (wishes.length <= 1) return;
+
+            currentSlide = (currentSlide - 1 + wishes.length) % wishes.length;
+            updateCarouselPosition();
+            resetAutoPlay();
+        }
+
+        function moveToSlide(index) {
+            currentSlide = index;
+            updateCarouselPosition();
+            resetAutoPlay();
+        }
+
+        function startAutoPlay() {
+            const wishes = JSON.parse(localStorage.getItem('wedding_wishes')) || [];
+            if (wishes.length > 1) {
+                carouselInterval = setInterval(nextSlide, 5000); // geser otomatis tiap 5 detik
+            }
+        }
+
+        function resetAutoPlay() {
+            clearInterval(carouselInterval);
+            startAutoPlay();
+        }
+
+        function handleSwipeGesture() {
+            const threshold = 50; // Jarak minimal sapuan (px)
+            if (startX - endX > threshold) {
+                // Sapu ke kiri -> slide berikutnya
+                nextSlide();
+            } else if (endX - startX > threshold) {
+                // Sapu ke kanan -> slide sebelumnya
+                prevSlide();
+            }
+        }
+
+        // SYSTEM KEAMANAN: PANEL ADMIN PENGANTIN
         let footerClickCount = 0;
         let footerClickTimer = null;
 
-        // Mendeteksi 5 ketukan cepat pada footer untuk memicu Login Admin
         function handleFooterClick() {
             footerClickCount++;
-            
-            // Reset timer jika tidak mengetuk lagi dalam waktu 2 detik
             clearTimeout(footerClickTimer);
             footerClickTimer = setTimeout(() => {
                 footerClickCount = 0;
@@ -547,159 +891,86 @@
             }
         }
 
-        // Membuka Dialog Login Admin
         function showAdminLogin() {
             const modal = document.getElementById('admin-login-modal');
             const loginBox = document.getElementById('login-box');
-            
             modal.classList.remove('opacity-0', 'pointer-events-none');
             loginBox.classList.remove('scale-95');
             loginBox.classList.add('scale-100');
-            
-            // Fokus otomatis ke input PIN
             setTimeout(() => {
                 document.getElementById('admin-pin').focus();
             }, 100);
         }
 
-        // Menutup Dialog Login Admin
         function closeAdminLogin() {
             const modal = document.getElementById('admin-login-modal');
             const loginBox = document.getElementById('login-box');
-            
             modal.classList.add('opacity-0', 'pointer-events-none');
             loginBox.classList.remove('scale-100');
             loginBox.classList.add('scale-95');
-            document.getElementById('admin-pin').value = ''; // Reset password input
+            document.getElementById('admin-pin').value = '';
         }
 
-        // Memverifikasi PIN input (PIN Bawaan: 1234)
         function verifyAdminPin() {
             const pinInput = document.getElementById('admin-pin').value;
-            
-            // Anda bisa mengganti kode '1234' di bawah ini dengan PIN pilihan Anda sendiri
             if (pinInput === '1234') {
-                localStorage.setItem('is_wedding_admin', 'true'); // Menyimpan status admin agar tidak perlu berulang kali login
+                localStorage.setItem('is_wedding_admin', 'true');
                 document.getElementById('admin-section').classList.remove('hidden');
-                
                 closeAdminLogin();
                 showAlert(
                     "Akses Diizinkan!", 
-                    "<strong>Mode Pengantin Berhasil Aktif</strong>.<br>Fitur pembuat link dan pengirim WhatsApp kini muncul di bagian bawah halaman.", 
+                    "<strong>Mode Pengantin Aktif</strong>.<br>Fitur pembuat link dan pengirim WhatsApp kini muncul di bagian bawah halaman.", 
                     "fa-solid fa-unlock-keyhole text-emerald-500 text-4xl",
                     () => {
-                        // Gulir halus otomatis ke panel admin
                         document.getElementById('admin-section').scrollIntoView({ behavior: 'smooth' });
                     }
                 );
             } else {
-                showAlert(
-                    "PIN Salah!", 
-                    "Sandi yang Anda masukkan tidak valid. Silakan coba lagi.", 
-                    "fa-solid fa-lock text-red-500 text-4xl"
-                );
+                showAlert("PIN Salah!", "Sandi yang Anda masukkan tidak valid.", "fa-solid fa-lock text-red-500 text-4xl");
             }
         }
 
-        // Membatalkan Akses & Mengunci Kembali Panel Admin
         function lockAdminSection() {
             localStorage.removeItem('is_wedding_admin');
             document.getElementById('admin-section').classList.add('hidden');
-            
-            showAlert(
-                "Panel Dikunci", 
-                "Fitur Pengantin telah berhasil diamankan dan disembunyikan kembali dari tamu biasa.", 
-                "fa-solid fa-lock text-stone-500 text-4xl"
-            );
+            showAlert("Panel Dikunci", "Fitur Pengantin berhasil disembunyikan.", "fa-solid fa-lock text-stone-500 text-4xl");
         }
 
-        // SALIN REKENING
-        function copyToClipboard(elementId, btnId) {
-            const textToCopy = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const btn = document.getElementById(btnId);
-                const originalText = btn.innerHTML;
-                btn.innerHTML = `<i class="fa-solid fa-check text-emerald-600"></i> Berhasil Disalin!`;
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                }, 2000);
-            }).catch(err => {
-                console.error('Gagal menyalin: ', err);
-            });
-        }
-
-        // RSVP SUBMISSION WITH WHATSAPP INTEGRATION
-        function handleRSVP(event) {
-            event.preventDefault();
-            const name = document.getElementById('rsvp-name').value;
-            const attendance = document.getElementById('rsvp-attendance').value;
-            const guests = document.getElementById('rsvp-guests').value;
-
-            // NOMOR WHATSAPP PENGANTIN (Ganti nomor ini dengan nomor Anda, awali dengan kode negara tanpa +, misal: 628123456789)
-            const targetWhatsappNumber = "6281234567890"; 
-
-            // Format Pesan WhatsApp yang Indah dan Rapi
-            const messageText = `Halo Romeo & Juliet, saya ingin mengonfirmasi kehadiran untuk acara pernikahan Anda.\n\n*Detail Konfirmasi Kehadiran:*\n* Nama: ${name}\n* Kehadiran: ${attendance}\n* Jumlah Tamu: ${guests} Orang\n\nTerima kasih atas undangannya!`;
-            const encodedMessage = encodeURIComponent(messageText);
-            const waUrl = `https://api.whatsapp.com/send?phone=${targetWhatsappNumber}&text=${encodedMessage}`;
-
-            // Tampilkan custom alert sebelum berpindah ke WhatsApp
-            showAlert(
-                "Konfirmasi Terkirim!",
-                `Terima kasih <strong>${name}</strong>. Anda akan diarahkan otomatis ke WhatsApp untuk mengirimkan bukti konfirmasi kehadiran ke mempelai.`,
-                "fa-brands fa-whatsapp text-emerald-500 text-4xl",
-                () => {
-                    // Buka link WhatsApp di tab baru setelah popup ditutup
-                    window.open(waUrl, '_blank');
-                }
-            );
-            
-            // Reset form
-            document.getElementById('rsvp-form').reset();
-        }
-
-        // TOOL KIRIM UNDANGAN VIA WHATSAPP (KHUSUS UNTUK MEMPELAI)
+        // TOOL KIRIM UNDANGAN (GENERATOR LINK)
         function sendInvitationViaWA() {
             const guestName = document.getElementById('admin-guest-name').value;
             const guestPhone = document.getElementById('admin-guest-phone').value;
 
             if (!guestName) {
-                showAlert("Nama Tamu Kosong", "Mohon isi nama tamu undangan terlebih dahulu.", "fa-solid fa-triangle-exclamation text-amber-500 text-4xl");
+                showAlert("Nama Tamu Kosong", "Mohon isi nama tamu terlebih dahulu.", "fa-solid fa-triangle-exclamation text-amber-500 text-4xl");
                 return;
             }
 
-            // Normalisasi nomor telepon agar formatnya benar (menghapus spasi, strip, dll.)
             let cleanPhone = guestPhone.replace(/[^0-9]/g, '');
             if (cleanPhone.startsWith('0')) {
                 cleanPhone = '62' + cleanPhone.slice(1);
             }
 
-            // Mengambil URL dasar halaman saat ini secara dinamis
             const baseUrl = window.location.origin + window.location.pathname;
             const invitationLink = `${baseUrl}?to=${encodeURIComponent(guestName)}`;
 
-            // Teks Undangan Berantai Romantis & Sopan
             const inviteMessage = `Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i *${guestName}* untuk menghadiri hari bahagia pernikahan kami (Romeo & Juliet).\n\nSilakan kunjungi tautan undangan digital di bawah ini untuk melihat detail informasi acara dan peta lokasi:\n👉 ${invitationLink}\n\nMerupakan kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.\n\nTerima kasih.\n- Romeo & Juliet`;
             const encodedInvite = encodeURIComponent(inviteMessage);
             
-            let waLink;
-            if (cleanPhone) {
-                waLink = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodedInvite}`;
-            } else {
-                waLink = `https://api.whatsapp.com/send?text=${encodedInvite}`;
-            }
+            let waLink = cleanPhone 
+                ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodedInvite}`
+                : `https://api.whatsapp.com/send?text=${encodedInvite}`;
 
             showAlert(
                 "Undangan Siap Kirim",
                 cleanPhone 
-                    ? `Klik tombol di bawah untuk mengirimkan pesan undangan pribadi langsung ke WhatsApp *${guestName}*.`
-                    : `Nomor telepon kosong. Klik tombol di bawah untuk menyalin pesan undangan beserta tautannya ke Clipboard Anda secara manual.`,
+                    ? `Klik tombol di bawah untuk mengirim pesan undangan pribadi ke WhatsApp *${guestName}*.`
+                    : `Nomor kosong. Klik tombol di bawah untuk menyalin pesan undangan ke Clipboard secara manual.`,
                 "fa-solid fa-envelope-open-text text-brand-500 text-4xl",
                 () => {
                     if (cleanPhone) {
                         window.open(waLink, '_blank');
                     } else {
-                        // Salin ke Clipboard jika nomor WhatsApp dikosongkan
                         const tempInput = document.createElement("textarea");
                         tempInput.value = inviteMessage;
                         document.body.appendChild(tempInput);
@@ -708,28 +979,42 @@
                         document.body.removeChild(tempInput);
                         
                         setTimeout(() => {
-                            showAlert("Berhasil Disalin!", "Teks undangan romantis berhasil disalin ke Clipboard! Sekarang Anda tinggal menempelkannya (*paste*) secara manual ke chat tamu.", "fa-solid fa-clipboard-check text-emerald-600 text-4xl");
+                            showAlert("Berhasil Disalin!", "Teks undangan berhasil disalin! Anda tinggal menempelkannya (*paste*) ke chat tamu.", "fa-solid fa-clipboard-check text-emerald-600 text-4xl");
                         }, 300);
                     }
                 }
             );
         }
 
-        // SISTEM POPUP CUSTOM DIALOG (MENGGANTIKAN ALERT)
+        // SALIN REKENING
+        function copyToClipboard(elementId, btnId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const btn = document.getElementById(btnId);
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-check text-emerald-600"></i> Berhasil Disalin!`;
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }
+
+        // POPUP DIALOG CUSTOM HELPERS
         let alertCallback = null;
 
         function showAlert(title, message, iconClass = "fa-solid fa-circle-check", callback = null) {
             document.getElementById('alert-title').innerText = title;
             document.getElementById('alert-message').innerHTML = message;
-            
-            const iconEl = document.getElementById('alert-icon');
-            iconEl.className = iconClass;
-            
+            document.getElementById('alert-icon').className = iconClass;
             alertCallback = callback;
             
             const alertModal = document.getElementById('custom-alert');
             const alertBox = document.getElementById('alert-box');
-            
             alertModal.classList.remove('opacity-0', 'pointer-events-none');
             alertBox.classList.remove('scale-95');
             alertBox.classList.add('scale-100');
@@ -738,78 +1023,17 @@
         function closeAlert() {
             const alertModal = document.getElementById('custom-alert');
             const alertBox = document.getElementById('alert-box');
-            
             alertModal.classList.add('opacity-0', 'pointer-events-none');
             alertBox.classList.remove('scale-100');
             alertBox.classList.add('scale-95');
             
-            // Eksekusi callback aksi lanjutan jika disematkan
             if (alertCallback && typeof alertCallback === 'function') {
                 const currentCallback = alertCallback;
-                alertCallback = null; // Reset untuk mencegah pemanggilan ganda
+                alertCallback = null;
                 currentCallback();
             }
         }
 
-        // GUESTBOOK / UCAPAN WISHES (Menggunakan localStorage agar interaktif saat dicoba)
-        function handleWishSubmit(event) {
-            event.preventDefault();
-            const name = document.getElementById('wish-name').value;
-            const text = document.getElementById('wish-text').value;
-
-            const newWish = {
-                name: name,
-                text: text,
-                status: 'Hadir' // Default status sebagai simulasi
-            };
-
-            // Ambil ucapan lama
-            let wishes = JSON.parse(localStorage.getItem('wedding_wishes')) || [];
-            wishes.unshift(newWish); // Tambah paling atas
-            localStorage.setItem('wedding_wishes', JSON.stringify(wishes));
-
-            // Render ulang ucapan
-            renderWishes(wishes);
-
-            // Reset Form
-            document.getElementById('wish-form').reset();
-        }
-
-        function loadWishes() {
-            let wishes = JSON.parse(localStorage.getItem('wedding_wishes')) || [];
-            if(wishes.length > 0) {
-                renderWishes(wishes);
-            }
-        }
-
-        function renderWishes(wishes) {
-            const container = document.getElementById('wishes-container');
-            
-            // Pertahankan contoh default bawaan, lalu gabung dengan isian baru
-            let staticHtml = `
-                <div class="bg-white p-4 rounded-xl shadow-sm space-y-1">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-xs text-stone-800">Andi Prasetyo</span>
-                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full"><i class="fa-solid fa-circle-check"></i> Hadir</span>
-                    </div>
-                    <p class="text-xs text-stone-600">Selamat ya Romeo dan Juliet! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. Maaf belum bisa hadir langsung, tapi doa terbaik dari kami selalu menyertai kalian.</p>
-                </div>
-            `;
-
-            let dynamicHtml = wishes.map(wish => `
-                <div class="bg-white p-4 rounded-xl shadow-sm space-y-1">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-xs text-stone-800">${escapeHtml(wish.name)}</span>
-                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full"><i class="fa-solid fa-circle-check"></i> Hadir</span>
-                    </div>
-                    <p class="text-xs text-stone-600">${escapeHtml(wish.text)}</p>
-                </div>
-            `).join('');
-
-            container.innerHTML = dynamicHtml + staticHtml;
-        }
-
-        // Helper untuk mencegah XSS injection di input ucapan
         function escapeHtml(text) {
             return text
                 .replace(/&/g, "&amp;")
